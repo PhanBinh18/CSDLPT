@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # -------------------------------------
+  # SITE 1: TRỤ SỞ CHÍNH / KHO MIỀN BẮC
+  # -------------------------------------
+  mysql-mienbac:
+    image: mysql:8.0
+    container_name: db_kho_mien_bac
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: db_mien_bac
+    ports:
+      - "3306:3306" # Trỏ port 3306 của máy host vào 3306 của container
+    volumes:
+      - ./mysql-data-bac:/var/lib/mysql # Lưu trữ data vật lý
+      - ./init-scripts-bac:/docker-entrypoint-initdb.d # Thư mục chứa script SQL tự chạy khi start
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+
+  # -------------------------------------
+  # SITE 2: KHO MIỀN NAM
+  # -------------------------------------
+  mysql-miennam:
+    image: mysql:8.0
+    container_name: db_kho_mien_nam
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: db_mien_nam
+    ports:
+      - "3307:3306" # Trỏ port 3307 của máy host vào 3306 của container
+    volumes:
+      - ./mysql-data-nam:/var/lib/mysql
+      - ./init-scripts-nam:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
