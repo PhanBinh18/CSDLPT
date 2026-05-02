@@ -1,0 +1,17 @@
+site:
+  mienbac:
+    jdbc-url: jdbc:mysql://localhost:3306/db_mien_bac?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: rootpassword
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  miennam:
+    jdbc-url: jdbc:mysql://localhost:3307/db_mien_nam?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: rootpassword
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
