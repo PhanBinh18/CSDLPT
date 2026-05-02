@@ -52,3 +52,32 @@ Vì bảng `TonKho` bị phân mảnh ngang theo từng kho, nên một CSDL c�
 ## 4. Lưu ý
 *   **Không dùng ID tự tăng (Auto Increment):** Tránh trùng lặp ID khi gom dữ liệu từ nhiều node về. Ưu tiên sử dụng chuỗi ID định danh (VD: `SP01`, `KHO_MB`) hoặc UUID.
 *   **Multi-Datasource:** Tầng Service sẽ sử dụng `RoutingDataSource` để switch kết nối giữa các node database trước khi thực thi lệnh query.
+
+## 5. API & Các Nghiệp Vụ Phân Tán 
+
+### 5.1. API Tra cứu (Read Phân Tán)
+*   **`GET /api/ton-kho/{idSp}`**
+    *   **Chức năng:** Tra cứu số lượng tồn kho của một sản phẩm trên toàn quốc.
+    *   **Nghiệp vụ phân tán:** Hệ thống điều hướng (routing) connection đến từng site (Kho Miền Bắc, Kho Miền Nam), thực thi lệnh `SELECT`, sau đó gom cụm (Aggregate) kết quả trên RAM để trả về tổng tồn kho và chi tiết từng kho.
+
+### 5.2. Nhóm API Đặt hàng (Write Phân Tán / Distributed Transaction)
+*   **`POST /api/don-hang`**
+    *   **Chức năng:** Tạo đơn hàng mới từ giỏ hàng của khách.
+    *   **Nghiệp vụ phân tán (Tách đơn thông minh theo Data Locality):** Thuật toán cốt lõi của hệ thống, tuân thủ nghiêm ngặt nguyên lý "Tính địa phương của dữ liệu" để tối ưu chi phí vận chuyển.
+        1. Vỏ đơn hàng (`DonHang`) được **nhân bản (Replicate)** sang tất cả các site để tránh vi phạm khóa ngoại.
+        2. **Định tuyến theo vùng miền (Geo-routing):** Hệ thống dựa vào trường `KhuVuc` của Khách hàng để thiết lập mảng Node ưu tiên.
+            * Khách thuộc `MIEN_BAC` hoặc `BAC_TRUNG_BO` sẽ ưu tiên xuất hàng từ `KHO-NORTH` trước.
+            * Khách thuộc `MIEN_NAM` hoặc `NAM_TRUNG_BO` sẽ ưu tiên xuất hàng từ `KHO-SOUTH` trước.
+        3. **Phân xuất đơn hàng chéo kho (Split Order):** Bằng việc sử dụng vòng lặp duyệt qua mảng Node ưu tiên, nếu Node chính (Primary Node) cạn kho, hệ thống tự động bẻ lái kết nối (switch database context) sang Node dự phòng (Secondary Node) để lấy nốt phần hàng còn thiếu.
+        4. Kết quả giao dịch là các dòng `ChiTietDH` bị **phân mảnh (Fragmented)**, nằm rải rác ở nhiều cơ sở dữ liệu vật lý khác nhau cho cùng một đơn hàng.
+
+### 5.3. API Báo cáo & Thống kê (In-memory Join)
+Vì dữ liệu bị phân mảnh ở nhiều Database vật lý khác nhau, hệ thống không thể dùng câu lệnh SQL `JOIN` thông thường xuyên Server. Các API dưới đây áp dụng kỹ thuật **In-memory Processing** (Xử lý trên RAM của tầng Backend).
+
+*   **`GET /api/bao-cao/doanh-thu?thang={thang}&nam={nam}`**
+    *   **Chức năng:** Thống kê doanh thu toàn hệ thống và doanh thu đóng góp của từng kho.
+    *   **Nghiệp vụ phân tán:** Gọi truy vấn cục bộ tại từng site để tính tổng tiền (`SUM(SoLuong * DonGia)`) của các `ChiTietDH` thuộc kho đó. Sau đó, Backend gộp các con số này lại để ra tổng doanh thu toàn quốc.
+
+*   **`GET /api/bao-cao/don-hang-phan-xuat`**
+    *   **Chức năng:** Tìm các mã đơn hàng đặc biệt (Đơn hàng phải lấy sản phẩm từ nhiều kho khác nhau để giao cho khách).
+    *   **Nghiệp vụ phân tán:** Sử dụng thuật toán giao tập hợp (Set Intersection). Lấy danh sách toàn bộ ID Đơn hàng ở Kho Bắc, đem so sánh chéo (giao) với danh sách ID Đơn hàng ở Kho Nam để tìm ra các đơn hàng xuất hiện ở cả hai nơi.

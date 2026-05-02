@@ -26,4 +26,7 @@ public class KhachHang {
 
     @Column(name = "MatKhau", length = 255, nullable = false)
     private String matKhau;
+
+    @Column(name = "KhuVuc")
+    private String khuVuc;
 }
