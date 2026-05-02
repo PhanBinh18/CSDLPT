@@ -38,6 +38,7 @@ CREATE TABLE KhachHang (
                            Email VARCHAR(100) UNIQUE,
                            SDT VARCHAR(20),
                            DiaChi VARCHAR(255),
+                           KhuVuc VARCHAR(50),
                            MatKhau VARCHAR(255) NOT NULL
 );
 
@@ -240,15 +241,15 @@ INSERT INTO TonKho (ID_Kho, ID_SP, SoLuong) VALUES
 -- =============================================
 -- 5. KHÁCH HÀNG
 -- =============================================
-INSERT INTO KhachHang (ID_KH, HoTen, Email, SDT, DiaChi, MatKhau) VALUES
-                                                                      ('KH-APP-001', 'Nguyễn Văn An',   'an.nguyen@gmail.com',  '0901111001', 'Hoàn Kiếm, Hà Nội',      'hashed_pw_001'),
-                                                                      ('KH-APP-002', 'Trần Thị Bích',   'bich.tran@gmail.com',  '0902222002', 'Cầu Giấy, Hà Nội',       'hashed_pw_002'),
-                                                                      ('KH-APP-003', 'Lê Minh Cường',   'cuong.le@gmail.com',   '0903333003', 'Hải Châu, Đà Nẵng',      'hashed_pw_003'),
-                                                                      ('KH-APP-004', 'Phạm Thị Dung',   'dung.pham@gmail.com',  '0904444004', 'Thanh Khê, Đà Nẵng',     'hashed_pw_004'),
-                                                                      ('KH-APP-005', 'Hoàng Văn Em',    'em.hoang@gmail.com',   '0905555005', 'Bình Thạnh, TP.HCM',     'hashed_pw_005'),
-                                                                      ('KH-APP-006', 'Vũ Thị Phương',   'phuong.vu@gmail.com',  '0906666006', 'Quận 7, TP.HCM',         'hashed_pw_006'),
-                                                                      ('KH-APP-007', 'Đặng Quốc Hùng',  'hung.dang@gmail.com',  '0907777007', 'Ngũ Hành Sơn, Đà Nẵng', 'hashed_pw_007'),
-                                                                      ('KH-APP-008', 'Bùi Thị Lan',     'lan.bui@gmail.com',    '0908888008', 'Đống Đa, Hà Nội',        'hashed_pw_008');
+INSERT INTO KhachHang (ID_KH, HoTen, Email, SDT, DiaChi, KhuVuc, MatKhau) VALUES
+                                                                              ('KH-APP-001', 'Nguyễn Văn An',   'an.nguyen@gmail.com',  '0901111001', 'Hoàn Kiếm, Hà Nội',      'MIEN_BAC',       'hashed_pw_001'),
+                                                                              ('KH-APP-002', 'Trần Thị Bích',   'bich.tran@gmail.com',  '0902222002', 'Cầu Giấy, Hà Nội',       'MIEN_BAC',       'hashed_pw_002'),
+                                                                              ('KH-APP-008', 'Bùi Thị Lan',     'lan.bui@gmail.com',    '0908888008', 'Đống Đa, Hà Nội',        'MIEN_BAC',       'hashed_pw_008'),
+                                                                              ('KH-APP-007', 'Đặng Quốc Hùng',  'hung.dang@gmail.com',  '0907777007', 'Vinh, Nghệ An',          'BAC_TRUNG_BO',   'hashed_pw_007'),
+                                                                              ('KH-APP-003', 'Lê Minh Cường',   'cuong.le@gmail.com',   '0903333003', 'Hải Châu, Đà Nẵng',      'NAM_TRUNG_BO',   'hashed_pw_003'),
+                                                                              ('KH-APP-004', 'Phạm Thị Dung',   'dung.pham@gmail.com',  '0904444004', 'Thanh Khê, Đà Nẵng',     'NAM_TRUNG_BO',   'hashed_pw_004'),
+                                                                              ('KH-APP-005', 'Hoàng Văn Em',    'em.hoang@gmail.com',   '0905555005', 'Bình Thạnh, TP.HCM',     'MIEN_NAM',       'hashed_pw_005'),
+                                                                              ('KH-APP-006', 'Vũ Thị Phương',   'phuong.vu@gmail.com',  '0906666006', 'Quận 7, TP.HCM',         'MIEN_NAM',       'hashed_pw_006');
 
 -- =============================================
 -- 6. NHÂN VIÊN
