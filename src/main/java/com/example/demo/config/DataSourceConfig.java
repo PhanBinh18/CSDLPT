@@ -61,7 +61,7 @@ public class DataSourceConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(routingDataSource());
-        em.setPackagesToScan("com.techstore.entity"); // Thư mục chứa các class @Entity
+        em.setPackagesToScan("com.example.demo.entity"); // Thư mục chứa các class @Entity
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);

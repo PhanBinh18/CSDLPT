@@ -56,7 +56,7 @@ public class DonHangService {
 
             // Bước A: Thử lấy hàng từ Kho Miền Bắc
             DbContextHolder.setCurrentDb(SiteEnum.MIEN_BAC);
-            TonKho tkBac = tonKhoRepository.findById(new TonKhoId("KHO_MB", item.getIdSp())).orElse(null);
+            TonKho tkBac = tonKhoRepository.findById(new TonKhoId("KHO-NORTH", item.getIdSp())).orElse(null);
 
             if (tkBac != null && tkBac.getSoLuong() > 0) {
                 int slLayTuBac = Math.min(soLuongCanMua, tkBac.getSoLuong());
@@ -66,8 +66,8 @@ public class DonHangService {
                 tonKhoRepository.save(tkBac);
 
                 // Tạo Chi tiết đơn hàng báo xuất từ Kho Bắc
-                luuChiTietDonHang(idDhMoi, item.getIdSp(), slLayTuBac, donGiaGiaDinh, "KHO_MB");
-                chiTietResponses.add(taoResponseChiTiet(item.getIdSp(), slLayTuBac, donGiaGiaDinh, "KHO_MB"));
+                luuChiTietDonHang(idDhMoi, item.getIdSp(), slLayTuBac, donGiaGiaDinh, "KHO-NORTH");
+                chiTietResponses.add(taoResponseChiTiet(item.getIdSp(), slLayTuBac, donGiaGiaDinh, "KHO-NORTH"));
 
                 soLuongCanMua -= slLayTuBac; // Cập nhật số lượng còn thiếu
                 tongTienDonHang = tongTienDonHang.add(donGiaGiaDinh.multiply(new BigDecimal(slLayTuBac)));
@@ -76,7 +76,7 @@ public class DonHangService {
             // Bước B: Nếu vẫn còn thiếu hàng, nhảy sang Kho Miền Nam lấy tiếp
             if (soLuongCanMua > 0) {
                 DbContextHolder.setCurrentDb(SiteEnum.MIEN_NAM);
-                TonKho tkNam = tonKhoRepository.findById(new TonKhoId("KHO_MN", item.getIdSp())).orElse(null);
+                TonKho tkNam = tonKhoRepository.findById(new TonKhoId("KHO-SOUTH", item.getIdSp())).orElse(null);
 
                 if (tkNam != null && tkNam.getSoLuong() >= soLuongCanMua) {
                     // Trừ tồn kho Miền Nam
@@ -84,8 +84,8 @@ public class DonHangService {
                     tonKhoRepository.save(tkNam);
 
                     // Tạo Chi tiết đơn hàng báo xuất từ Kho Nam
-                    luuChiTietDonHang(idDhMoi, item.getIdSp(), soLuongCanMua, donGiaGiaDinh, "KHO_MN");
-                    chiTietResponses.add(taoResponseChiTiet(item.getIdSp(), soLuongCanMua, donGiaGiaDinh, "KHO_MN"));
+                    luuChiTietDonHang(idDhMoi, item.getIdSp(), soLuongCanMua, donGiaGiaDinh, "KHO-SOUTH");
+                    chiTietResponses.add(taoResponseChiTiet(item.getIdSp(), soLuongCanMua, donGiaGiaDinh, "KHO-SOUTH"));
 
                     tongTienDonHang = tongTienDonHang.add(donGiaGiaDinh.multiply(new BigDecimal(soLuongCanMua)));
                     soLuongCanMua = 0; // Đã đủ hàng

@@ -25,17 +25,17 @@ public class TonKhoService {
 
         // 1. Nhảy sang site Miền Bắc lấy dữ liệu
         DbContextHolder.setCurrentDb(SiteEnum.MIEN_BAC);
-        Integer tonKhoBac = tonKhoRepository.getSoLuongBySp(idSp);
+        Integer tonKhoBac = tonKhoRepository.getSoLuongBySpAndKho(idSp, "KHO-NORTH");
         int slBac = (tonKhoBac != null) ? tonKhoBac : 0;
         tongTonKho += slBac;
-        chiTiet.put("KHO_MB", slBac); // Giả định KHO_MB là ID của kho miền Bắc
+        chiTiet.put("KHO-NORTH", slBac); // Giả định KHO-NORTH là ID của kho miền Bắc
 
         // 2. Nhảy sang site Miền Nam lấy dữ liệu
         DbContextHolder.setCurrentDb(SiteEnum.MIEN_NAM);
-        Integer tonKhoNam = tonKhoRepository.getSoLuongBySp(idSp);
+        Integer tonKhoNam = tonKhoRepository.getSoLuongBySpAndKho(idSp, "KHO-SOUTH");
         int slNam = (tonKhoNam != null) ? tonKhoNam : 0;
         tongTonKho += slNam;
-        chiTiet.put("KHO_MN", slNam); // Giả định KHO_MN là ID của kho miền Nam
+        chiTiet.put("KHO-SOUTH", slNam); // Giả định KHO-SOUTH là ID của kho miền Nam
 
         // 3. Dọn dẹp context
         DbContextHolder.clear();

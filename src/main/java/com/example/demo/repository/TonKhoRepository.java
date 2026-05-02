@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface TonKhoRepository extends JpaRepository<TonKho, TonKhoId> {
 
     // Lấy số lượng tồn kho của 1 sản phẩm (tại Site đang được trỏ tới)
-    @Query("SELECT t.soLuong FROM TonKho t WHERE t.idSp = :idSp")
-    Integer getSoLuongBySp(@Param("idSp") String idSp);
+    @Query("SELECT t.soLuong FROM TonKho t WHERE t.idSp = :idSp AND t.idKho = :idKho")
+    Integer getSoLuongBySpAndKho(@Param("idSp") String idSp, @Param("idKho") String idKho);
 }
